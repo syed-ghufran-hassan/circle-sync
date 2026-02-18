@@ -313,3 +313,104 @@
     }
   }
 }
+
+/* Add to WalletDropdown.css */
+
+.wallet-dropdown__transactions {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wallet-dropdown__transactions-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.wallet-dropdown__transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.wallet-dropdown__transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  transition: background-color 0.2s;
+}
+
+.wallet-dropdown__transaction-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.wallet-dropdown__transaction-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.wallet-dropdown__transaction-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-dropdown__transaction-type {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+}
+
+.wallet-dropdown__transaction-time {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.wallet-dropdown__transaction-amount {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.wallet-dropdown__view-all {
+  width: 100%;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #8b5cf6;
+  background-color: rgba(139, 92, 246, 0.1);
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.wallet-dropdown__view-all:hover {
+  background-color: rgba(139, 92, 246, 0.2);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .wallet-dropdown__transaction-item {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  .wallet-dropdown__view-all {
+    background-color: rgba(139, 92, 246, 0.15);
+  }
+}
