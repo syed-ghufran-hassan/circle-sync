@@ -6,7 +6,10 @@ import {
   Check, 
   ExternalLink, 
   DollarSign, 
-  LogOut 
+  LogOut,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Clock
 } from 'lucide-react';
 import clsx from 'clsx';
 import { Button } from './Button';
@@ -15,6 +18,14 @@ import { Badge } from './Badge';
 import './WalletDropdown.css';
 
 export type NetworkType = 'mainnet' | 'testnet' | 'devnet';
+
+// Transaction interface for history preview
+export interface TransactionPreview {
+  id: string;
+  type: 'send' | 'receive';
+  amount: number;
+  timestamp: number;
+}
 
 export interface WalletDropdownProps {
   /** Wallet address */
@@ -33,10 +44,14 @@ export interface WalletDropdownProps {
   onCopyAddress?: () => void;
   /** View explorer handler */
   onViewExplorer?: () => void;
+  /** View all transactions handler */
+  onViewAllTransactions?: () => void;
   /** Optional class name */
   className?: string;
   /** Show balance in trigger */
   showBalanceInTrigger?: boolean;
+  /** Recent transactions preview */
+  recentTransactions?: TransactionPreview[];
 }
 
 const formatSTX = (microStx: number): string => {
@@ -49,6 +64,21 @@ const formatSTX = (microStx: number): string => {
 const truncateAddress = (addr: string): string => {
   if (addr.length <= 16) return addr;
   return `${addr.slice(0, 8)}...${addr.slice(-6)}`;
+};
+
+const formatTimestamp = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
 };
 
 const getNetworkBadgeVariant = (net: NetworkType): 'success' | 'warning' | 'info' => {
@@ -75,8 +105,10 @@ export const WalletDropdown = memo(forwardRef<HTMLDivElement, WalletDropdownProp
       onDisconnect,
       onCopyAddress,
       onViewExplorer,
+      onViewAllTransactions,
       className,
       showBalanceInTrigger = true,
+      recentTransactions = [],
     },
     ref
   ) {
@@ -211,6 +243,55 @@ export const WalletDropdown = memo(forwardRef<HTMLDivElement, WalletDropdownProp
                   </span>
                 )}
               </div>
+
+              {/* Recent Transactions Preview */}
+              {recentTransactions.length > 0 && (
+                <div className="wallet-dropdown__transactions">
+                  <div className="wallet-dropdown__transactions-header">
+                    <Clock size={14} />
+                    <span>Recent Activity</span>
+                  </div>
+                  <div className="wallet-dropdown__transactions-list">
+                    {recentTransactions.slice(0, 3).map((tx) => (
+                      <div key={tx.id} className="wallet-dropdown__transaction-item">
+                        <div className="wallet-dropdown__transaction-icon">
+                          {tx.type === 'receive' ? (
+                            <ArrowDownLeft size={14} className="text-green-400" />
+                          ) : (
+                            <ArrowUpRight size={14} className="text-red-400" />
+                          )}
+                        </div>
+                        <div className="wallet-dropdown__transaction-details">
+                          <span className="wallet-dropdown__transaction-type">
+                            {tx.type === 'receive' ? 'Received' : 'Sent'}
+                          </span>
+                          <span className="wallet-dropdown__transaction-time">
+                            {formatTimestamp(tx.timestamp)}
+                          </span>
+                        </div>
+                        <span className={clsx(
+                          'wallet-dropdown__transaction-amount',
+                          tx.type === 'receive' ? 'text-green-400' : 'text-red-400'
+                        )}>
+                          {tx.type === 'receive' ? '+' : '-'}{formatSTX(tx.amount)} STX
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {recentTransactions.length > 0 && (
+                    <button
+                      className="wallet-dropdown__view-all"
+                      onClick={() => {
+                        setIsOpen(false);
+                        onViewAllTransactions?.();
+                      }}
+                      type="button"
+                    >
+                      View all transactions
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Actions */}
               <div className="wallet-dropdown__actions">
